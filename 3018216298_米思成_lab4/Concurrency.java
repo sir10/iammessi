@@ -12,7 +12,25 @@ public class Concurrency {
 	    Thread t2 = new Thread(mt, "线程2");
 	    t1.start();
 	    t2.start();
-	    mt.print();
+	    double[][] MC = mt.print();
+	    
+	    //使用断言判断结果正确性
+	    double[][] mx1 = mt.ReturnMx1();
+	    double[][] mx2 = mt.ReturnMx2();
+	    double[][] MS =  Serial.SerialCalculate(mx1, mx2);
+	    assert (MxEqual(MS,MC)):"经断言判断，串行计算结果与并发计算结果不同";
+	    System.out.println("经断言判断，串行计算结果与并发计算结果相同");
+	}
+	
+	//判断串行和并发计算结果是否相同
+	public static boolean MxEqual(double[][] MS, double[][] MC) {
+		for (int i = 0; i<MS.length; i++) {
+			for(int j = 0; j<MS[0].length; j++) {
+				if (MS[i][j] != MC[i][j])
+					return false;
+			}
+		}
+		return true;	
 	}
 
 }
@@ -67,7 +85,6 @@ class MatrixThread implements Runnable {
 				System.out.println();
 			}
 		}
-		
 	}
 	
 	
@@ -77,10 +94,10 @@ class MatrixThread implements Runnable {
 	
 	}
 	
-	//输出总结果
-	public void print() throws InterruptedException {
+	//输出并发计算总结果
+	public double[][] print() throws InterruptedException {
 		Thread.sleep(3000);
-		System.out.println("总计算结果：");
+		System.out.println("并发计算结果：");
 		for (int m = 0; m<i; m++) {
 			for(int n = 0; n<k; n++) {
 				System.out.print(M[m][n]);
@@ -88,6 +105,15 @@ class MatrixThread implements Runnable {
 			}
 			System.out.println();
 		}
+		System.out.println();
+		return M;
 	}
 	
+	
+	public double[][] ReturnMx1() {
+		return mx.mx1;
+	}
+	public double[][] ReturnMx2() {
+		return mx.mx2;
+	}
 }
